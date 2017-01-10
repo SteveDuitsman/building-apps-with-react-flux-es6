@@ -4,8 +4,6 @@ import {bindActionCreators} from 'redux';
 import * as courseActions from '../../actions/courseActions'
 import CourseForm from './CourseForm';
 
-
-
 /**
  * 
  * 
@@ -24,6 +22,21 @@ class ManageCoursePage extends React.Component {
 
     // Bindings
     this.updateCoursesState = this.updateCoursesState.bind(this);
+    this.saveCourse = this.saveCourse.bind(this);    
+  }
+
+  /**
+   * 
+   * 
+   * @param {any} nextProps
+   * 
+   * @memberOf ManageCoursePage
+   */
+  componentWillReceiveProps(nextProps) {
+    if (this.props.course.id != nextProps.course.id) {
+      // necessary to populate form when existing course is loaded directly
+      this.setState({course: Object.assign({}, nextProps.course)});
+    }
   }
 
   /**
@@ -41,24 +54,52 @@ class ManageCoursePage extends React.Component {
     return this.setState({ course: course });
   }
 
-  
+  saveCourse(event) {
+    event.preventDefault();
+    this.props.actions.saveCourse(this.state.course);
+    this.context.router.push('/courses');
+  }
 
   render() {
     return (
       <CourseForm course={this.state.course}
                   errors={this.state.errors}
                   allAuthors={this.props.authors}
-                  onChange={this.updateCoursesState}/>
+                  onChange={this.updateCoursesState}
+                  onSave={this.saveCourse}/> 
     );
   }
 }
 
 ManageCoursePage.propTypes = {
   course: PropTypes.object.isRequired,
-  authors: PropTypes.array.isRequired
+  authors: PropTypes.array.isRequired,
+  actions: PropTypes.object.isRequired
+};
+
+// Pull in the React Router context so router is available on this context.route
+ManageCoursePage.contextTypes = {
+  router: PropTypes.object
+};
+
+/**
+ * 
+ * 
+ * @param {any} courses
+ * @param {any} id
+ * @returns
+ */
+const getCourseById = (courses, id) => {
+  const course = courses.filter(course => course.id == id);
+  if (course.length)
+    return course[0];
+  
+  return null;
 };
 
 const mapStateToProps = (state, ownProps) => {
+  const courseId = ownProps.params.id; // from the path '/course/:id'
+
   let course = {
     id: '',
     watchHref: '',
@@ -67,6 +108,10 @@ const mapStateToProps = (state, ownProps) => {
     length: '',
     category: ''
   };
+
+  if (!!courseId && state.courses.length > 0) {
+    course = getCourseById(state.courses, courseId);
+  }
 
   const authorsFormattedForDropDown = state.authors.map(author => {
     return {
