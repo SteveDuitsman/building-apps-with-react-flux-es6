@@ -4,7 +4,16 @@ import {bindActionCreators} from 'redux';
 import * as courseActions from '../../actions/courseActions'
 import CourseForm from './CourseForm';
 
+
+
+/**
+ * 
+ * 
+ * @class ManageCoursePage
+ * @extends {React.Component}
+ */
 class ManageCoursePage extends React.Component {
+
   constructor(props, context) {
     super(props, context);
 
@@ -12,13 +21,34 @@ class ManageCoursePage extends React.Component {
       course: Object.assign({}, this.props.course),
       errors: {}
     };
+
+    // Bindings
+    this.updateCoursesState = this.updateCoursesState.bind(this);
   }
+
+  /**
+   * 
+   * 
+   * @param {any} event
+   * @returns
+   * 
+   * @memberOf ManageCoursePage
+   */
+  updateCoursesState(event) {
+    const field = event.target.name;
+    let course = this.state.course;
+    course[field] = event.target.value;
+    return this.setState({ course: course });
+  }
+
+  
 
   render() {
     return (
       <CourseForm course={this.state.course}
                   errors={this.state.errors}
-                  allAuthors={this.props.authors}/>
+                  allAuthors={this.props.authors}
+                  onChange={this.updateCoursesState}/>
     );
   }
 }
