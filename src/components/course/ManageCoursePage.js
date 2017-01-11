@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as courseActions from '../../actions/courseActions'
+import * as courseActions from '../../actions/courseActions';
 import {authorsFormattedForDropDown} from '../../selectors/selectors.js';
 import CourseForm from './CourseForm';
 import toastr from 'toastr';
@@ -157,6 +157,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     actions: bindActionCreators(courseActions, dispatch)
   };
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);

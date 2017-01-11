@@ -17,5 +17,5 @@ export function loadAuthors() {
       .catch(error => {
         throw(error);
       });
-  }
+  };
 }
