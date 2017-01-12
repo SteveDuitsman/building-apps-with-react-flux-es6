@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
+import {Link} from 'react-router';
 import TextInput from '../common/TextInput';
 import SelectInput from '../common/SelectInput';
-
 
 //
 //  Destructure props in the argument list
@@ -12,7 +12,8 @@ const CourseForm = ({
   onSave,
   onChange,
   saving,
-  errors
+  errors,
+  isNew
 }) => {
   return (
     <form>
@@ -49,6 +50,7 @@ const CourseForm = ({
         value={saving ? 'Saving...' : 'Save'}
         className="btn btn-primary"
         onClick={onSave} />
+      <Link to="/courses">Cancel</Link>
     </form>
   );
 };
@@ -59,6 +61,7 @@ CourseForm.propTypes = {
   onSave: React.PropTypes.func.isRequired,
   onChange: React.PropTypes.func.isRequired,
   saving: React.PropTypes.bool,
+  isNew: React.PropTypes.bool,
   errors: React.PropTypes.object
 };
 

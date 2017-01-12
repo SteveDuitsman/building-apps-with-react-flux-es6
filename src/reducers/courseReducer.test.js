@@ -42,4 +42,25 @@ describe('Course Reducer', () => {
     expect(untouchedCourse.title).toEqual('A');
     expect(newState.length).toEqual(3);
   });
+
+  it('should remove course when passed DELETE_COURSE_SUCCESS', () => {
+    // arrange
+    const initialState = [
+      {id:'A', title: 'A'},
+      {id:'B', title: 'B'},
+      {id:'C', title: 'C'}
+    ];  
+    const course = {id: 'B'};
+    const action = actions.deleteCourseSuccess(course);
+
+    // act
+    const newState = courseReducer(initialState, action);
+    const deletedCourse = newState.find(b => b.id == course.id);
+    const untouchedCourse = newState.find(a => a.id == 'A');
+
+    // assert
+    expect(deletedCourse).toBe(undefined);
+    expect(untouchedCourse.title).toEqual('A');
+    expect(newState.length).toEqual(2);
+  });
 });

@@ -7,8 +7,8 @@ import CourseForm from './CourseForm';
 import toastr from 'toastr';
 
 /**
- * 
- * 
+ *
+ *
  * @class ManageCoursePage
  * @extends {React.Component}
  */
@@ -20,41 +20,51 @@ export class ManageCoursePage extends React.Component {
     this.state = {
       course: Object.assign({}, this.props.course),
       errors: {},
-      saving: false
+      saving: false,
+      deleting: false
     };
 
     // Bindings
-    this.updateCoursesState = this.updateCoursesState.bind(this);
-    this.saveCourse = this.saveCourse.bind(this);    
+    this.updateCoursesState = this
+      .updateCoursesState
+      .bind(this);
+    this.saveCourse = this
+      .saveCourse
+      .bind(this);
+    this.deleteCourse = this
+      .deleteCourse
+      .bind(this);
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {any} nextProps
-   * 
+   *
    * @memberOf ManageCoursePage
    */
   componentWillReceiveProps(nextProps) {
     if (this.props.course.id != nextProps.course.id) {
       // necessary to populate form when existing course is loaded directly
-      this.setState({course: Object.assign({}, nextProps.course)});
+      this.setState({
+        course: Object.assign({}, nextProps.course)
+      });
     }
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {any} event
    * @returns
-   * 
+   *
    * @memberOf ManageCoursePage
    */
   updateCoursesState(event) {
     const field = event.target.name;
     let course = this.state.course;
     course[field] = event.target.value;
-    return this.setState({ course: course });
+    return this.setState({course: course});
   }
 
   courseFormIsValid() {
@@ -78,37 +88,61 @@ export class ManageCoursePage extends React.Component {
     }
 
     this.setState({saving: true});
-    this.props.actions
+    this
+      .props
+      .actions
       .saveCourse(this.state.course)
-      .then(() => this.redirect())
+      .then(() => this.redirect('Course Saved'))
       .catch(error => {
         toastr.error(error);
         this.setState({saving: false});
       });
   }
 
-  redirect() {
-    this.setState({saving: false});
-    toastr.success('Course Saved');
-    this.context.router.push('/courses');    
+  deleteCourse(event) {
+    event.preventDefault();
+    if (!this.props.isNew) {
+      if (confirm(`Are you sure you want to delete "${this.state.course.title}"?`)) {
+        this.setState({deleting: true});
+        this
+          .props
+          .actions
+          .deleteCourse(this.state.course)
+          .then(() => this.redirect('Course Deleted'))
+          .catch(error => {
+            toastr.error(error);
+            this.setState({deleting: false});
+          });
+      }
+    }
+  }
+
+  redirect(message) {
+    this.setState({saving: false, deleting: false});
+    toastr.success(message);
+    this
+      .context
+      .router
+      .push('/courses');
   }
 
   render() {
-    return (
-      <CourseForm course={this.state.course}
-                  errors={this.state.errors}
-                  allAuthors={this.props.authors}
-                  onChange={this.updateCoursesState}
-                  onSave={this.saveCourse} 
-                  saving={this.state.saving} /> 
-    );
+    return (<CourseForm
+      course={this.state.course}
+      errors={this.state.errors}
+      allAuthors={this.props.authors}
+      onChange={this.updateCoursesState}
+      onSave={this.saveCourse}
+      saving={this.state.saving}
+      isNew={this.props.isNew}/>);
   }
 }
 
 ManageCoursePage.propTypes = {
   course: PropTypes.object.isRequired,
   authors: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  isNew: PropTypes.bool.isRequired
 };
 
 // Pull in the React Router context so router is available on this context.route
@@ -117,15 +151,15 @@ ManageCoursePage.contextTypes = {
 };
 
 /**
- * 
- * 
+ *
+ *
  * @param {any} courses
  * @param {any} id
  * @returns
  */
 const getCourseById = (courses, id) => {
   const course = courses.filter(course => course.id == id);
-  if (course.length)
+  if (course.length) 
     return course[0];
   
   return null;
@@ -149,6 +183,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     course: course,
+    isNew: (!!course && !!course.id == false),
     authors: authorsFormattedForDropDown(state.authors)
   };
 };
