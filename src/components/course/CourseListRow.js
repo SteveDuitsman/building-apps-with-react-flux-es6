@@ -3,7 +3,7 @@ import {Link} from 'react-router';
 
 /* eslint-disable react/jsx-no-bind */
 // onDelete is not passed into any results under this, so we can use the () => {} syntax within the jsx
-const CourseListRow = ({course, onDelete}) => {
+const CourseListRow = ({course, onDelete, deleting}) => {
   return (
     <tr>
       <td><a href={course.watchHref} target="_blank">Watch</a></td>
@@ -16,7 +16,7 @@ const CourseListRow = ({course, onDelete}) => {
           type="button"
           className="btn btn-danger"
           onClick={(e) => onDelete(e, course)}>
-          Delete
+          {deleting ? 'Delete...' : 'Delete'}
         </button>
       </td>
     </tr>
@@ -25,7 +25,8 @@ const CourseListRow = ({course, onDelete}) => {
 
 CourseListRow.propTypes = {
   course: PropTypes.object.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
+  deleting: PropTypes.bool
 };
 
 export default CourseListRow;

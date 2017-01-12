@@ -5,7 +5,6 @@ import {bindActionCreators} from 'redux';
 import * as courseActions from '../../actions/courseActions';
 import CourseListRow from './CourseListRow';
 
-//const CourseList = ({courses}) => {
 class CourseList extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -23,13 +22,18 @@ class CourseList extends React.Component {
 
   deleteCourse(event, course) {
       if (confirm(`Are you sure you want to delete "${course.title}"?`)) {
+        this.setState({deleting: true});
         this
           .props
           .actions
           .deleteCourse(course)
-          .then(() => toastr.success('Courses Deleted'))
+          .then(() => {
+            toastr.success('Courses Deleted');
+            this.setState({deleting: false});
+          })
           .catch(error => {
             toastr.error(error);
+            this.setState({deleting: false});            
           });
       }
     }
@@ -49,12 +53,13 @@ class CourseList extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {courses.map(course => {
+          {
+            courses.map(course => {
               return (
-                <CourseListRow key={course.id} course={course} onDelete={this.deleteCourse} />
+                <CourseListRow key={course.id} course={course} onDelete={this.deleteCourse} deleting={this.state.deleting} />
               );
-            }
-          )}
+            })
+          }
         </tbody>
       </table>
     );
