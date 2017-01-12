@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as courseActions from '../../actions/courseActions';
 import CourseListRow from './CourseListRow';
+import Pagination from 'react-js-pagination';
 
 class CourseList extends React.Component {
   constructor(props, context) {
@@ -13,7 +14,9 @@ class CourseList extends React.Component {
       courses: [],
       deleting: false,
       sort: 'Title',
-      sortDirection: 'ascending'
+      sortDirection: 'ascending',
+      activePage: 1,
+      itemsPerPage: 2
     };
 
     // Bindings
@@ -21,6 +24,7 @@ class CourseList extends React.Component {
     this.onColumnClick = this.onColumnClick.bind(this);
     this.sorter = this.sorter.bind(this);
     this.getHeaderClass = this.getHeaderClass.bind(this);
+    this.handlePageChange = this.handlePageChange.bind(this);
   }
 
   deleteCourse(event, course) {
@@ -100,28 +104,48 @@ class CourseList extends React.Component {
     return classValue;
   }
 
+  handlePageChange(pageNumber) {
+    this.setState({activePage: pageNumber});
+  }
+
   render() {
-    let courses = this.props.courses.sort(this.sorter).map(course => {
-      return (
-      <CourseListRow key={course.id} course={course} onDelete={this.deleteCourse} deleting={this.state.deleting} />
-      );
-    });
+    let sortedCourses = this.props.courses.sort(this.sorter);
+    let startIndex = (this.state.activePage - 1) * this.state.itemsPerPage;
+    let endIndex = startIndex + this.state.itemsPerPage;
+    let courses = sortedCourses
+      .slice(startIndex, endIndex)
+      .map(course => {
+        return (
+        <CourseListRow key={course.id} course={course} onDelete={this.deleteCourse} deleting={this.state.deleting} />
+        );
+      });
+
     return (
-      <table className="table">
-        <thead>
-          <tr>
-            <th>&nbsp;</th>
-            <th onClick={this.onColumnClick}>Title<div className={`pull-right ${this.getHeaderClass('Title')}`}></div></th>
-            <th onClick={this.onColumnClick}>Author<div className={`pull-right ${this.getHeaderClass('Author')}`}></div></th>
-            <th onClick={this.onColumnClick}>Category<div className={`pull-right ${this.getHeaderClass('Category')}`}></div></th>
-            <th onClick={this.onColumnClick}>Length<div className={`pull-right ${this.getHeaderClass('Length')}`}></div></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {courses}
-        </tbody>
-      </table>
+      <div>      
+        <table className="table">
+          <thead>
+            <tr>
+              <th>&nbsp;</th>
+              <th onClick={this.onColumnClick}>Title<div className={`pull-right ${this.getHeaderClass('Title')}`}></div></th>
+              <th onClick={this.onColumnClick}>Author<div className={`pull-right ${this.getHeaderClass('Author')}`}></div></th>
+              <th onClick={this.onColumnClick}>Category<div className={`pull-right ${this.getHeaderClass('Category')}`}></div></th>
+              <th onClick={this.onColumnClick}>Length<div className={`pull-right ${this.getHeaderClass('Length')}`}></div></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {courses}
+          </tbody>
+        </table>
+        <div className="text-center">
+          <Pagination
+            activePage={this.state.activePage} 
+            itemsCountPerPage={this.state.itemsPerPage} 
+            totalItemsCount={this.props.courses.length} 
+            onChange={this.handlePageChange}
+          />
+        </div>
+      </div>      
     );
   }
 }
