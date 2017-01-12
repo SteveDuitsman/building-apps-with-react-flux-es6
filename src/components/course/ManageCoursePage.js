@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as courseActions from '../../actions/courseActions';
@@ -21,7 +22,8 @@ export class ManageCoursePage extends React.Component {
       course: Object.assign({}, this.props.course),
       errors: {},
       saving: false,
-      deleting: false
+      deleting: false,
+      hasChanges: false
     };
 
     // Bindings
@@ -34,6 +36,17 @@ export class ManageCoursePage extends React.Component {
     this.deleteCourse = this
       .deleteCourse
       .bind(this);
+  }
+
+  componentDidMount() {
+    this
+      .props
+      .router
+      .setRouteLeaveHook(this.props.route, () => {
+        if (this.state.hasChanges) {
+          return 'You have unsaved changes, are you sure you want to leave this page?';
+        }
+      });
   }
 
   /**
@@ -64,7 +77,7 @@ export class ManageCoursePage extends React.Component {
     const field = event.target.name;
     let course = this.state.course;
     course[field] = event.target.value;
-    return this.setState({course: course});
+    return this.setState({course: course, hasChanges: true});
   }
 
   courseFormIsValid() {
@@ -118,10 +131,10 @@ export class ManageCoursePage extends React.Component {
   }
 
   redirect(message) {
-    this.setState({saving: false, deleting: false});
+    this.setState({saving: false, deleting: false, hasChanges: false});
     toastr.success(message);
     this
-      .context
+      .props
       .router
       .push('/courses');
   }
@@ -142,13 +155,14 @@ ManageCoursePage.propTypes = {
   course: PropTypes.object.isRequired,
   authors: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
-  isNew: PropTypes.bool.isRequired
+  isNew: PropTypes.bool.isRequired,
+  router: PropTypes.object,
+  route: PropTypes.object
 };
 
-// Pull in the React Router context so router is available on this context.route
-ManageCoursePage.contextTypes = {
-  router: PropTypes.object
-};
+// Replaced by withRouter() Pull in the React Router context so router is
+// available on this context.route ManageCoursePage.contextTypes = {   router:
+// PropTypes.object };
 
 /**
  *
@@ -194,4 +208,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage));
