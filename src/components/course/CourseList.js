@@ -11,13 +11,16 @@ class CourseList extends React.Component {
 
     this.state = {
       courses: [],
-      deleting: false
+      deleting: false,
+      sort: 'Title',
+      sortDirection: 'ascending'
     };
 
     // Bindings
     this.deleteCourse = this.deleteCourse.bind(this);
     this.onColumnClick = this.onColumnClick.bind(this);
     this.sorter = this.sorter.bind(this);
+    this.getHeaderClass = this.getHeaderClass.bind(this);
   }
 
   deleteCourse(event, course) {
@@ -52,14 +55,20 @@ class CourseList extends React.Component {
         return 0;
       }
 
+      let sortResult = 0;
       let sortingColumn = this.state.sort.toLowerCase();
       if (a[sortingColumn] < b[sortingColumn]) {
-        return -1;
+        sortResult = -1;
       }
       if (a[sortingColumn] > b[sortingColumn]) {
-        return 1;
+        sortResult = 1;
       }
-      return 0;
+
+      if (this.state.sortDirection === 'descending') {
+        sortResult *= -1;
+      }
+
+      return sortResult;
     }
 
   /**
@@ -70,8 +79,25 @@ class CourseList extends React.Component {
    * @memberOf CourseList
    */
   onColumnClick(event) {
-    let column = event.currentTarget.innerText;
-    this.setState({sort: column});
+    let column = event.currentTarget.textContent;
+    let sortDirection = 'ascending';
+    
+    if (column === this.state.sort && sortDirection === this.state.sortDirection) {
+      sortDirection = 'descending';
+    }
+
+    this.setState({sort: column, sortDirection: sortDirection});
+  }
+
+  getHeaderClass(headerText) {
+    let classValue = '';
+    if (headerText.toLowerCase() === this.state.sort.toLowerCase()) {
+      classValue = 'arrow-down';
+      if (this.state.sortDirection === 'descending') {
+        classValue = 'arrow-up';
+      }
+    }
+    return classValue;
   }
 
   render() {
@@ -85,10 +111,10 @@ class CourseList extends React.Component {
         <thead>
           <tr>
             <th>&nbsp;</th>
-            <th onClick={this.onColumnClick}>Title</th>
-            <th onClick={this.onColumnClick}>Author</th>
-            <th onClick={this.onColumnClick}>Category</th>
-            <th onClick={this.onColumnClick}>Length</th>
+            <th onClick={this.onColumnClick}>Title<div className={`pull-right ${this.getHeaderClass('Title')}`}></div></th>
+            <th onClick={this.onColumnClick}>Author<div className={`pull-right ${this.getHeaderClass('Author')}`}></div></th>
+            <th onClick={this.onColumnClick}>Category<div className={`pull-right ${this.getHeaderClass('Category')}`}></div></th>
+            <th onClick={this.onColumnClick}>Length<div className={`pull-right ${this.getHeaderClass('Length')}`}></div></th>
             <th></th>
           </tr>
         </thead>
