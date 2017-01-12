@@ -33,7 +33,7 @@ class CoursesPage extends React.Component {
                value="Add Course"
                className="btn btn-primary"
                onClick={this.redirectToAddCoursePage} />
-        <CourseList courses={courses} />
+        {courses && courses.length > 0 && <CourseList courses={courses} />}
       </div>
     );
   }

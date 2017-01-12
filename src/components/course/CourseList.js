@@ -39,7 +39,11 @@ class CourseList extends React.Component {
     }
 
   render() {
-    let courses = this.props.courses;
+    let courses = this.props.courses.map(course => {
+      return (
+        <CourseListRow key={course.id} course={course} onDelete={this.deleteCourse} deleting={this.state.deleting} />
+      );
+    });
     return (
       <table className="table">
         <thead>
@@ -53,13 +57,7 @@ class CourseList extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {
-            courses.map(course => {
-              return (
-                <CourseListRow key={course.id} course={course} onDelete={this.deleteCourse} deleting={this.state.deleting} />
-              );
-            })
-          }
+          {courses}
         </tbody>
       </table>
     );
