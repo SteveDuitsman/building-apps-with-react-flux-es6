@@ -15,9 +15,9 @@ class CourseList extends React.Component {
     };
 
     // Bindings
-    this.deleteCourse = this
-      .deleteCourse
-      .bind(this);
+    this.deleteCourse = this.deleteCourse.bind(this);
+    this.onColumnClick = this.onColumnClick.bind(this);
+    this.sorter = this.sorter.bind(this);
   }
 
   deleteCourse(event, course) {
@@ -38,10 +38,46 @@ class CourseList extends React.Component {
       }
     }
 
+    /**
+     * generic sorter function that takes into account how we are sorting
+     * 
+     * @param {any} a
+     * @param {any} b
+     * @returns
+     * 
+     * @memberOf CourseList
+     */
+    sorter(a, b) {
+      if (!this.state.sort) {
+        return 0;
+      }
+
+      let sortingColumn = this.state.sort.toLowerCase();
+      if (a[sortingColumn] < b[sortingColumn]) {
+        return -1;
+      }
+      if (a[sortingColumn] > b[sortingColumn]) {
+        return 1;
+      }
+      return 0;
+    }
+
+  /**
+   * on column click, change the sorting of the table
+   * 
+   * @param {any} event
+   * 
+   * @memberOf CourseList
+   */
+  onColumnClick(event) {
+    let column = event.currentTarget.innerText;
+    this.setState({sort: column});
+  }
+
   render() {
-    let courses = this.props.courses.map(course => {
+    let courses = this.props.courses.sort(this.sorter).map(course => {
       return (
-        <CourseListRow key={course.id} course={course} onDelete={this.deleteCourse} deleting={this.state.deleting} />
+      <CourseListRow key={course.id} course={course} onDelete={this.deleteCourse} deleting={this.state.deleting} />
       );
     });
     return (
@@ -49,10 +85,10 @@ class CourseList extends React.Component {
         <thead>
           <tr>
             <th>&nbsp;</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Category</th>
-            <th>Length</th>
+            <th onClick={this.onColumnClick}>Title</th>
+            <th onClick={this.onColumnClick}>Author</th>
+            <th onClick={this.onColumnClick}>Category</th>
+            <th onClick={this.onColumnClick}>Length</th>
             <th></th>
           </tr>
         </thead>

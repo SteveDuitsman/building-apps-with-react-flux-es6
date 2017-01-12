@@ -18,7 +18,8 @@ describe('Manage Course Page', () => {
         length: '',
         category: ''
       },
-      actions: { saveCourse: () => { return Promise.resolve(); }}
+      actions: { saveCourse: () => { return Promise.resolve(); }},
+      router: { setRouteLeaveHook: () => { return null; }}
     };
 
     // mount - renders multiple layers, unlike shallow

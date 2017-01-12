@@ -161,8 +161,10 @@ ManageCoursePage.propTypes = {
 };
 
 // Replaced by withRouter() Pull in the React Router context so router is
-// available on this context.route ManageCoursePage.contextTypes = {   router:
-// PropTypes.object };
+// available on this context.route 
+// ManageCoursePage.contextTypes = {   
+//   router: PropTypes.object 
+// };
 
 /**
  *
