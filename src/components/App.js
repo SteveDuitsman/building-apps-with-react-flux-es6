@@ -6,7 +6,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="container-fluid">
-        <Header loading={this.props.loading} numberOfCourses={this.props.numberOfCourses} />
+        <Header loading={this.props.loading} 
+                numberOfCourses={this.props.numberOfCourses} 
+                numberOfAuthors={this.props.numberOfAuthors} />
         {this.props.children}
       </div>
     );
@@ -16,13 +18,15 @@ class App extends React.Component {
 App.propTypes = {
   children: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
-  numberOfCourses: PropTypes.number.isRequired
+  numberOfCourses: PropTypes.number.isRequired,
+  numberOfAuthors: PropTypes.number.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => {
   return {
     loading: state.ajaxCallsInProgress > 0,
-    numberOfCourses: state.courses.length
+    numberOfCourses: state.courses.length,
+    numberOfAuthors: state.authors.length
   };
 };
 
