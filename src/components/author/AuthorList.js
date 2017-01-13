@@ -3,7 +3,7 @@ import toastr from 'toastr';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as authorActions from '../../actions/authorActions';
-//import AuthorListRow from './AuthorListRow';
+import AuthorListRow from './AuthorListRow';
 import Pagination from 'react-js-pagination';
 
 class AuthorList extends React.Component {
@@ -15,26 +15,10 @@ class AuthorList extends React.Component {
     };
   }
 
-  createAuthorRow(author) {
-    return (
-      <tr key={author.id}>
-        <td></td>
-        <td>{author.firstName}</td>
-        <td>{author.lastName}</td>
-        <td></td>
-      </tr>
-    );
-  }
-
   render() {
     let authors = this.props.authors.map(author => {
       return (
-        <tr key={author.id}>
-          <td></td>
-          <td>{author.firstName}</td>
-          <td>{author.lastName}</td>
-          <td></td>
-        </tr>
+        <AuthorListRow key={author.id} author={author} />
       );
     });
     return (
@@ -42,9 +26,7 @@ class AuthorList extends React.Component {
         <table className="table">
           <thead>
             <tr>
-              <th>&nbsp;</th>
-              <th>First Name</th>
-              <th>Last Name</th>
+              <th>Name</th>
               <th></th>
             </tr>
           </thead>

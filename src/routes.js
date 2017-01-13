@@ -6,6 +6,7 @@ import AboutPage from './components/about/AboutPage';
 import CoursesPage from './components/course/CoursesPage';
 import AuthorsPage from './components/author/AuthorsPage';
 import ManageCoursePage from './components/course/ManageCoursePage'; //eslint-disable-line import/no-named-as-default
+import ManageAuthorPage from './components/author/ManageAuthorPage'; //eslint-disable-line import/no-named-as-default
 import Custom404Page from './components/common/Custom404Page'; //eslint-disable-line import/no-named-as-default
 
 export default (
@@ -14,7 +15,9 @@ export default (
     <Route path="courses" component={CoursesPage} />
     <Route path="course" component={ManageCoursePage} />
     <Route path="course/:id" component={ManageCoursePage} />
-    <Route path="authors" component={AuthorsPage} />    
+    <Route path="authors" component={AuthorsPage} />
+    <Route path="author" component={ManageAuthorPage} />
+    <Route path="author/:id" component={ManageAuthorPage} />
     <Route path="about" component={AboutPage} />
     <Route path="*" component={Custom404Page} />
   </Route>
