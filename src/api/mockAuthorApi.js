@@ -40,7 +40,7 @@ class AuthorApi {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         // Simulate server-side validation
-        const minAuthorNameLength = 3;
+        const minAuthorNameLength = 2;
         if (author.firstName.length < minAuthorNameLength) {
           reject(`First Name must be at least ${minAuthorNameLength} characters.`);
         }

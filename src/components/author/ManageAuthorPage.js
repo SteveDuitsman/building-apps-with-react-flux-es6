@@ -15,14 +15,35 @@ class ManageAuthorPage extends React.Component {
       errors: {},
       saving: false
     };
+
+    this.updateAuthorsState = this.updateAuthorsState.bind(this);
+    this.saveAuthor = this.saveAuthor.bind(this);
   }
 
-  updateAuthorsState() {
-
+  updateAuthorsState(event) {
+    const field = event.target.name;
+    let author = this.state.author;
+    author[field] = event.target.value;
+    return this.setState({author: author});
   }
 
-  saveAuthor() {
+  redirect(message) {
+    this.setState({saving: false});
+    toastr.success(message);
+    this.props.router.push('/authors');
+  }
 
+  saveAuthor(event) {
+    event.preventDefault();
+    this.setState({saving: true});
+
+    this.props.actions
+      .saveAuthor(this.state.author)
+      .then(() => this.redirect('Author Saved'))
+      .catch((error) => {
+        toastr.error(error);
+        this.setState({saving: false});
+      });
   }
 
   render() {

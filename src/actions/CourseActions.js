@@ -52,7 +52,6 @@ export function saveCourse(course) {
     return courseApi
       .saveCourse(course)
       .then(savedCourse => {
-        // "Merge" the course
         course.id
           ? dispatch(updateCourseSuccess(savedCourse))
           : dispatch(createCourseSuccess(savedCourse));
